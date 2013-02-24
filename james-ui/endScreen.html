@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html>
+<head>
+<title>eBay Search Results</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+<style type="text/css">
+  #container {
+    background: url("bgTile2.png");
+    width: 80%;
+    height: 800px;
+  }
+  .thumbContainer, .thumbContainerHighlight {
+    box-shadow: 0 0 15px #333;
+    margin: 10px;
+    width: 140px;
+    height: 140px;
+    float: left;
+    padding: 10px;
+    background-color: rgba(221, 221, 221, 0.8);
+    border-bottom: 2px solid #555;
+  }
+  .thumbContainerHighlight {
+    border: 3px dashed #aaa;
+    background: none;
+    box-shadow: 0 0 0;
+    width: 134px;
+    height: 134px;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="container">
+<div id="results">
+  <div class="thumbContainer">
+    <img src="thumb.png" />
+  </div>
+  <div class="thumbContainer">
+    <img src="thumb.png" />
+  </div>
+  <div class="thumbContainer">
+    <img src="thumb.png" />
+  </div>
+  <div class="thumbContainer">
+    <img src="thumb.png" />
+  </div>
+  <div class="thumbContainer">
+    <img src="thumb.png" />
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div>
+
+<script>
+  $(function() {
+    //$(".thumbContainer").draggable({ revert: true, helper: "clone" });
+    $("#results").sortable({ placeholder: "thumbContainerHighlight", revert: true });
+    $( "#results" ).disableSelection();
+    $(".thumbContainer").draggable({ revert: true, helper: "clone" });
+  });
+
+</script>
+
+</body>
+</html>
