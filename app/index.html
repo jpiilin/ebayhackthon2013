@@ -71,8 +71,9 @@
     //global variables (yay)
     var ebay_item_categories = [];
     // new globe varables for category
-    var  listPics = new Array(); 
-
+    
+    var  listCat = new Array(); 
+    /*var   list = [];  // static array*/
 
     function _cb_findItemsByKeywords(root)
     {
@@ -165,9 +166,11 @@
 
             $('#results').empty();
 
-            jQuery('<script/>', {
-                src: url
-            }).appendTo('#results');
+            // jQuery('<script/>', {
+            //     src: url
+            // }).appendTo('#results');
+            alert("I am an alert box!");
+
         });
     </script>
 
