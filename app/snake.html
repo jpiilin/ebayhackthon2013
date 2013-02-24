@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <title>Ebay Snake</title>
+        <!-- Declaration for JQuery -->
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+        <!-- Declaration for JZhang CSS -->
+         <link rel="stylesheet" type="text/css" href="snake.css" media="screen" />
+     </head>
+    
+    <body>
+        <!-- DIVS -->
+                  <select id="category">
+                <option value="All Cateories">All Categories</option>
+                <option value="Antiques">Antiques</option>
+                <option value="Art">Art</option>
+                <option value="Baby">Baby</option>
+                <option value="Books">Books</option>
+                <option value="Business & Industrial">Business & Industrial</option>
+                <option value="Cameras & Photo">Cameras & Photo</option>
+                <option value="Cell Phones & Accessories">Cell Phones & Accessories</option>
+                <option value="Clothing, Shoes & Accessories">Clothing, Shoes & Accessories</option>
+                <option value="Coins & Paper Money">Coins & Paper Money</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Computers/Tablets & Networking">Computers/Tablets & Networking</option>
+                <option value="Consumer Electronics">Consumer Electronics</option>
+                <option value="Crafts">Crafts</option>
+                <option value="Dolls & Bears">Dolls & Bears</option>
+                <option value="DVDs & Movies">DVDs & Movies</option>
+                <option value="eBay Motors">eBay Motors</option>
+                <option value="Entertainment Memorabilia">Entertainment Memorabilia</option>
+                <option value="Everything Else">Everything Else</option>
+                <option value="Gift Cards & Coupons">Gift Cards & Coupons</option>
+                <option value="Health & Beauty">Health & Beauty</option>
+                <option value="Home & Garden">Home & Garden</option>
+                <option value="Jewelry & Watches">Jewelry & Watches</option>
+                <option value="Music">Music</option>
+                <option value="Musical Instruments & Gear">Musical Instruments & Gear</option>
+                <option value="Pet Supplies">Pet Supplies</option>
+                <option value="Pottery & Glass">Pottery & Glass</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Specialty Services">Specialty Services</option>
+                <option value="Sporting Goods">Sporting Goods</option>
+                <option value="Sports Mem, Cards & Fan Shop">Sports Mem, Cards & Fan Shop</option>
+                <option value="Stamps">Stamps</option>
+                <option value="Tickets">Tickets</option>
+                <option value="Toys & Hobbies">Toys & Hobbies</option>
+                <option value="Travel">Travel</option>
+                <option value="Video Games & Consoles">Video Games & Consoles</option>
+            </select>
+        </div>
+        <div id="results"></div>
+        
+
+        <!-- Starting Using Scripts -->
+
+        <!--Scripts Using EbayAPI-->
+        <script>
+            //global variables (yay)
+            if(typeof ebay_item_categories == 'undefined') {
+                   ebay_item_categories = [];
+            }
+
+            if(typeof count == 'undefined') {
+         	   count = 0;
+             }
+
+            // if(typeof listURL == 'undefined'){
+            // // new globe varables for category
+            // 	    var listURL = new Array();
+            // }
+            /*var   list = [];  // static array*/
+
+            function _cb_findItemsByKeywords(root) {
+                console.log(" _cb_findItemsByKeywords RUNS");
+                if (root.findItemsByKeywordsResponse[0] != undefined) {
+                    console.log(root);
+                    console.log(root.findItemsByKeywordsResponse);
+                    var items = root.findItemsByKeywordsResponse[0].searchResult[0].item || [];
+                    var arr = [];
+
+                    var html = [];
+                    html.push('<table class="table" width="100%" border="0" cellspacing="0" cellpadding="3"><tbody>');
+
+                    for (var i = 0; i < items.length; ++i) {
+                        var item = items[i];
+                        var title = item.title;
+                        var pic = item.galleryURL;
+                        var viewitem = item.viewItemURL;
+                        var category = item.primaryCategory[0].categoryName;
+
+	
+                        ebay_item_categories.push({
+                            url: pic,
+                            category: category
+                        });
+
+                        if (arr[category] === undefined) {
+                            arr[category] = 1;
+                        } else {
+                            arr[category]++;
+                        }
+                        if (null != title && null != viewitem) {
+                            html.push('<tr><td>' + '<img src="' + pic + '" border="0">' + '</td>' +
+                                '<td><a href="' + viewitem + '" target="_blank">' + category + ' ' + arr[category] + '</a></td></tr>');
+                        }
+                    }
+
+                    // disable printings
+                    // html.push('</tbody></table>');
+                    // document.getElementById("results").innerHTML = html.join("");
+
+                    console.log("ebayITEMS "+ebay_item_categories);
+
+               		for (var i=0;i<ebay_item_categories.length;i++)
+		{ 
+     			console.log("ebayITEM-> "+ebay_item_categories[i].url+"-> "+ebay_item_categories[i].category);
+		}
+                }
+            }
+              function runEbayApi(){
+                console.log("runEbayAPI works");
+                var catVal = 'Books';
+                // $('#category').change(function () {
+
+                    catVal = $('#category').val();
+
+                    var url = "http://svcs.ebay.com/services/search/FindingService/v1";
+                    url += "?OPERATION-NAME=findItemsByKeywords";
+                    url += "&SERVICE-VERSION=1.0.0";
+                    url += "&SECURITY-APPNAME=LinDong0e-3603-4b0c-9a1c-a667e5f0d5c";
+                    url += "&GLOBAL-ID=EBAY-US";
+                    url += "&RESPONSE-DATA-FORMAT=JSON";
+                    url += "&callback=_cb_findItemsByKeywords";
+                    url += "&REST-PAYLOAD";
+                    url += "&keywords=" + encodeURI(catVal);
+                    url += "&paginationInput.entriesPerPage=10";
+
+                    $('#results').empty();
+
+
+	// $.ajax({
+	//   url: url,
+	//   // data: data,
+	//   success: function(data, textStatus, jqXHR){
+	//   	$('#results').html(data);
+	//   	// ('#results')
+	//   }
+	//   //success, supposed to be a function,
+	//   // dataType: dataType
+	// });
+
+                    // jQuery
+                    $('<script/>', {
+                           src: url
+                          }).appendTo('#results');
+               
+            	//alert("I am an alert box!" + count);
+            	// increat the counter
+               	count++;
+
+               	hello = "HEY";
+               	var hello1 = "HEY";
+               	console.log("ENCODED-> "+encodeURI(catVal));
+               	console.log("HELLO->"+hello);
+            }
+        </script>
+
+         <button onclick="runEbayApi()">Select 3 categories to play game</button>
+         <br/>
+         <!-- <button onclick="playSnake()">PLAY GAME</button> -->
+        <button onclick="displayALL()">PLAY GAME</button>
+
+
+        
+      <script>
+    
+      </script>
+
+    </body>
+
+</html>

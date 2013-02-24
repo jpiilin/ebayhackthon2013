@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<title>HTML5 Snake</title>
+
+<style type="text/css">
+h3{
+ margin: 0;
+ padding:10px 5px;
+ background-color: gray;
+ color: white;
+}
+
+p{
+ color:red;
+ font-weight:bold;
+}
+
+input{
+ margin:40px 20px 0 20px;
+ width:70px;
+ height:30px;
+}
+</style>
+
+
+</head>
+
+<body onkeydown="turn(event)" onunload="exit()">
+
+<div style="float:left;font-family:Arial;text-align:center;">
+    <div style="float:left">
+        <canvas id="pool" width="600" height="500" style="margin:40px 20px 0 200px;border:2px solid #c3c3c3;"></canvas>
+    </div>
+    <div style="float:left;margin:40px 20px 0 20px;">
+        <div style="border:2px solid #c3c3c3;">
+            <h3>Your Score</h3>
+            <p id="score">0</p>
+            <h3>Highest Score</h3>
+            <p id="highest">0</p>
+        </div>
+        <div>
+            <input type="button" value="Start" id="start" onclick="start()"></input>
+        </div>
+        <div>
+            <input type="button" value="Restart" id="restart" onclick="restart()"></input>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+var canvas = document.getElementById("pool");       //Canvas Container.
+var cxt = canvas.getContext("2d");                  //Canvas Context.
+var snake_width = 15;                               //Snake body's width.
+var snake_height = 15;                              //Snake body's height.
+var step = 20;                                      //Snake's step pixel.
+var faceX;                                          //Snake's face-to in X-axis.
+var faceY;                                          //Snake's face-to in Y-axis.
+var speed = 400;                                    //Snake's base speed.
+var level;                                          //Game level.
+var formerX;                                        //X-coordinate of former body.
+var formerY;                                        //Y-coordinate of former body.
+var formerX_temp;                                   //Temp parameter.
+var formerY_temp;                                   //Temp parameter.
+var snake = new Array();                            //Snake.
+var food;                                           //Food.
+var score;                                          //Score.
+var highest;                                        //Highest score.
+var isStart = false;                                //If game is started or stop.
+
+initial();
+moving();
+
+/* Body class. Memeber posX/postY record the left/top position of 
+the body rectangle. */
+function body(x,y){
+    this.posX = x;
+    this.posY = y;
+}
+
+/* Initial the environment.If localStorage records the last play status,
+then use the status. Else use the initial environment.*/
+function initial(){
+    if(localStorage.highest){
+        snake = JSON.parse(localStorage.snake);
+        food = JSON.parse(localStorage.food);
+        faceX = Number(localStorage.faceX);
+        faceY = Number(localStorage.faceY);
+        level = Number(localStorage.level);
+        score = Number(localStorage.score);
+        highest = Number(localStorage.highest);
+    }else{
+        snake[0] = new body(80,40);
+        snake[1] = new body(60,40);
+        snake[2] = new body(40,40);
+        snake[3] = new body(20,40);
+        food = new body(300,40);
+        faceX = 1;
+        faceY = 0;
+        level = 1;
+        score = 0;
+        highest = 0;
+    }
+    
+    document.getElementById("score").innerHTML = score;
+    document.getElementById("highest").innerHTML = highest;
+    draw();
+    resetPos();
+}
+
+/*Re-calculate every body's position of the snake, and check
+if it eats food,hits the boder or hits itself.*/
+function resetPos(){
+    //Hit border.
+    if(snake[0].posX < 0 || snake[0].posX > 580 || 
+    snake[0].posY < 0 || snake[0].posY > 480){
+        die();
+        return;
+    }
+    
+    //Hit self.
+    for(var i=1;i<snake.length;i++){
+        if(snake[0].posX==snake[i].posX && snake[0].posY==snake[i].posY){
+            die();
+            return;
+        }
+    }
+    
+    //Re-calculate position and check eat.
+    formerX = snake[0].posX;
+    formerY = snake[0].posY;
+    snake[0].posX = snake[0].posX + step*faceX;
+    snake[0].posY = snake[0].posY - step*faceY;
+    if(snake[0].posX == food.posX && snake[0].posY == food.posY){
+        eat();
+    }
+    for(var i=1;i<snake.length;i++){
+        formerX_temp = snake[i].posX;
+        formerY_temp = snake[i].posY;
+        snake[i].posX = formerX;
+        snake[i].posY = formerY;
+        formerX = formerX_temp;
+        formerY = formerY_temp;
+    }
+}
+
+/*Draw the game to the canvas.*/
+function draw(){
+    cxt.clearRect(0, 0, canvas.width, canvas.height);
+    cxt.fillStyle="#999999";
+    cxt.fillRect(snake[0].posX,snake[0].posY,snake_width,snake_height);
+    for(var i=1;i<snake.length;i++){
+        cxt.fillRect(snake[i].posX,snake[i].posY,snake_width,snake_height);
+    }
+    cxt.fillStyle="#ff0000";
+    cxt.fillRect(food.posX,food.posY,snake_width,snake_height);
+    
+    document.getElementById("score").innerHTML = score;
+    document.getElementById("highest").innerHTML = highest;
+}
+
+/*Moving the game use recursion. The frame is decide by the level.*/
+function moving(){
+    if(isStart){
+        draw();
+        resetPos();
+    }
+    var t=setTimeout("moving()",speed/level);
+}
+
+/*Change direction where player press the up/down/left/right key on
+the keybord.*/
+function turn(event){
+    switch(event.keyCode) {
+        case 37:        //Left
+            if(faceY != 0){
+                faceX = -1;
+                faceY = 0;
+            }
+            break;
+        case 38:        //Up
+            if(faceX != 0){
+                faceX = 0;
+                faceY = 1;
+            }
+            break;
+        case 39:        //Right
+            if(faceY != 0){
+                faceX = 1;
+                faceY = 0;
+            }
+            break;
+        case 40:        //Down
+            if(faceX != 0){
+                faceX = 0;
+                faceY = -1;
+            }
+            break;
+    }
+}
+/*Eat food action.Score increase, snake length increase,
+reset food.*/
+function eat(){
+    score += 10;
+    level += 0.05;
+    if(highest < score)
+        highest = score;
+    snake[snake.length] = new body(snake[snake.length-1].posX,snake[snake.length-1].posY);
+    
+    var tempX = Math.round(Math.random()*10);
+    var tempY = Math.round(Math.random()*10);
+    food.posX = (snake[0].posX+tempX*20)%600;
+    food.posY = (snake[0].posY+tempY*20)%500;
+}
+
+/*Die action*/
+function die(){
+    start();
+    alert("You Lose!");
+}
+
+/*Start or stop the game.*/
+function start(){
+    if(isStart){
+        document.getElementById("start").value = "Start";
+        isStart = false;
+    }
+    else{
+        document.getElementById("start").value = "Stop";
+        isStart = true;
+    }
+}
+
+/*Restart the game.*/
+function restart(){
+    delete localStorage.snake;
+    snake = [];
+    snake[0] = new body(80,40);
+    snake[1] = new body(60,40);
+    snake[2] = new body(40,40);
+    snake[3] = new body(20,40);
+    food.posX = 300;
+    food.posY = 40;
+    faceX = 1;
+    faceY = 0;
+    level = 1;
+    score = 0;
+    isStart = false;
+    document.getElementById("start").value = "Start";
+    draw();
+}
+
+/*Record the game status when exits the game.*/
+function exit(){
+    if(score >= highest)
+        localStorage.highest = score;
+    localStorage.snake = JSON.stringify(snake);
+    localStorage.food = JSON.stringify(food);
+    localStorage.faceX = faceX;
+    localStorage.faceY = faceY;
+    localStorage.level = level;
+    localStorage.highest = highest;
+    localStorage.score = score;
+}
+
+</script>
+
+</body>
+</html>

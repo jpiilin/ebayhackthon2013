@@ -1,0 +1,25 @@
+body
+{
+	background-image:url('bg.jpg');
+}
+
+.tile
+{
+	height:  12px;
+	width: 12px;
+}
+
+.thumbContainerHighlight {
+    border: 3px dashed #aaa;
+    background: none;
+    box-shadow: 0 0 0;
+    width: 134px;
+    height: 134px;
+}
+
+#head{
+	position: absolute;
+	left : 100px;
+	top : 100px;
+}
+
