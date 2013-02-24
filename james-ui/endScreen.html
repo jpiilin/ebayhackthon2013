@@ -114,6 +114,44 @@
     //$("#container").draggable({ revert: true});
   });
 
+  var generator1 = new generator("gen1");
+  var genID = generator1.getHtmlID();
+  var objEx = {};
+  var arr = [];
+
+  objEx.name = "someName";
+  arr[0] = 3;
+  arr[1] = "brick";
+  arr.push("jsljfs");
+
+  console.log(genID);
+
+  function generator(id) {
+    /* Instances */
+    var htmlID = id;
+
+    /* Methods */
+    this.getHtmlID = function() {
+      //console.log(this);
+      return htmlID;
+    }
+    this.setHtmlID = function(newID) {
+      htmlID = newID;
+    }
+    this.someOtherMethod = function() {
+      this.setHtmlID();
+    }
+
+  }
+
+  function brick() {
+    alert("brick323");
+  }
+
+  $("body").click( function() {
+    brick();
+  })
+
 </script>
 
 </body>
