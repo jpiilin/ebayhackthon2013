@@ -12,7 +12,7 @@
     
     <body>
         <!-- DIVS -->
-                  <select id="category">
+                 <select id="category">
                 <option value="All Cateories">All Categories</option>
                 <option value="Antiques">Antiques</option>
                 <option value="Art">Art</option>
@@ -51,6 +51,12 @@
                 <option value="Video Games & Consoles">Video Games & Consoles</option>
             </select>
         </div>
+
+        <br/>
+          <label for="keyword">Type Keywords Here</label>
+
+          <input type="label" id="keywords" value="Keyword">
+        <br/>
         <div id="results"></div>
         
 
@@ -166,6 +172,20 @@
                	console.log("ENCODED-> "+encodeURI(catVal));
                	console.log("HELLO->"+hello);
             }
+
+
+            // function displayALL()
+            // {
+            //     console.log("RUN");
+            //     for (var i = ebay_item_categories.le.category;ngth - 1; i >= 0; i--) 
+            //     {
+            //            // ebay_item_categories[i].category;
+            //            document.getElementById("results").innerHTML =   
+            //            "<div class=\"thumbContainer\"> <img src=\""
+            //            + ebay_item_categories[i].url +
+            //            "\" /><br/>";
+            //        }
+            // }
         </script>
 
          <button onclick="runEbayApi()">Select 3 categories to play game</button>

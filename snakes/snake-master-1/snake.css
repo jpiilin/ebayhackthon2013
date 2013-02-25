@@ -1,0 +1,46 @@
+#screen {
+    width: 600px;
+    margin: 40px auto 0 auto;
+}
+
+#grid div {
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+    background-color: #eee;
+    font-size: 8px;
+}
+
+#footer {
+    clear: both;
+    text-align: center;
+}
+
+#footer span {
+    margin-left: 10px;
+}
+
+#footer b {
+    margin-left: 5px;
+}
+
+.w {
+    background-color: #ccc !important;
+}
+
+.s {
+    /*snake*/
+    /*background-image: url("http://www.google.com/images/errors/logo_sm.gif");*/
+    background-color: green !important;
+}
+
+.t {
+
+    background-color: red !important;
+}
+
+.a {
+    /*apple*/
+    background-color: blue !important;
+}
